@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= title %> | CSE 340 Service Network
+    </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="nav-container">
+            <a href="/" class="brand-logo">
+                <span class="brand-badge">CSE 340</span>
+                <span class="brand-title">Service Network</span>
+            </a>
+            <nav aria-label="Main Navigation">
+                <ul class="nav-links">
+                    <li><a href="/" class="<%= title === 'Home' ? 'active' : '' %>">Home</a></li>
+                    <li><a href="/organizations" class="<%= title === 'Our Partner Organizations' ? 'active' : '' %>">Organizations</a></li>
+                    <li><a href="/projects" class="<%= title === 'Service Projects' ? 'active' : '' %>">Projects</a></li>
+                    <li><a href="/categories" class="<%= title === 'Project Categories' ? 'active' : '' %>">Categories</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <div class="site-wrapper">
