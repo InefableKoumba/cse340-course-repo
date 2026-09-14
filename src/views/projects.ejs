@@ -6,35 +6,28 @@
     </div>
 
     <div class="projects-grid">
-        <article class="project-card">
-            <div class="project-badge">Environmental</div>
-            <h2 class="project-title">Park Cleanup Initiative</h2>
-            <p class="project-desc">Join us to clean up local community parks, plant native flora, clear litter, and make public spaces safe and vibrant for families.</p>
-            <div class="project-meta">
-                <span>📍 Riverside City Park</span>
-                <span>🕒 Saturday, 9:00 AM - 1:00 PM</span>
-            </div>
-        </article>
-
-        <article class="project-card">
-            <div class="project-badge">Food Relief</div>
-            <h2 class="project-title">Community Food Drive</h2>
-            <p class="project-desc">Help collect, sort, package, and distribute nutritious food and pantry essentials to local families and shelters in need.</p>
-            <div class="project-meta">
-                <span>📍 Central Community Center</span>
-                <span>🕒 Bi-weekly Wednesdays, 4:00 PM</span>
-            </div>
-        </article>
-
-        <article class="project-card">
-            <div class="project-badge">Education</div>
-            <h2 class="project-title">After-School Tutoring</h2>
-            <p class="project-desc">Volunteer to mentor and tutor K-12 students in math, science, reading, and basic computer programming literacy.</p>
-            <div class="project-meta">
-                <span>📍 Westside Public Library</span>
-                <span>🕒 Tuesdays & Thursdays, 3:30 PM</span>
-            </div>
-        </article>
+        <% if (projects && projects.length > 0) { %>
+            <% projects.forEach(project => { %>
+                <% 
+                   const formattedDate = new Date(project.date).toLocaleDateString('en-US', {
+                       year: 'numeric',
+                       month: 'long',
+                       day: 'numeric'
+                   });
+                %>
+                <article class="project-card">
+                    <div class="project-badge"><%= project.organization_name %></div>
+                    <h2 class="project-title"><%= formattedDate %>: <%= project.title %> (<%= project.organization_name %>)</h2>
+                    <p class="project-desc"><%= project.description %></p>
+                    <div class="project-meta">
+                        <span>📍 <%= project.location %></span>
+                        <span>📅 <%= formattedDate %></span>
+                    </div>
+                </article>
+            <% }); %>
+        <% } else { %>
+            <p>No service projects found.</p>
+        <% } %>
     </div>
 </main>
 <%- include('partials/footer') %>

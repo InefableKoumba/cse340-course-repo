@@ -6,33 +6,18 @@
     </div>
 
     <div class="categories-grid">
-        <article class="category-card">
-            <div class="category-icon">🌱</div>
-            <h2 class="category-title">Environmental</h2>
-            <p class="category-desc">Tree planting, urban park maintenance, ecological restoration, recycling campaigns, and community garden management.</p>
-            <span class="category-tag">12 Active Projects</span>
-        </article>
-
-        <article class="category-card">
-            <div class="category-icon">📚</div>
-            <h2 class="category-title">Educational</h2>
-            <p class="category-desc">K-12 tutoring, youth sports coaching, ESL teaching, STEM learning labs, and adult literacy classes.</p>
-            <span class="category-tag">8 Active Projects</span>
-        </article>
-
-        <article class="category-card">
-            <div class="category-icon">🤝</div>
-            <h2 class="category-title">Community Service</h2>
-            <p class="category-desc">Food bank sorting, hot meal kitchen prep, neighborhood cleanups, senior support, and emergency relief drives.</p>
-            <span class="category-tag">15 Active Projects</span>
-        </article>
-
-        <article class="category-card">
-            <div class="category-icon">🏥</div>
-            <h2 class="category-title">Health and Wellness</h2>
-            <p class="category-desc">Elderly companionship, nursing home visits, hospital volunteer assistance, blood drives, and wellness workshops.</p>
-            <span class="category-tag">6 Active Projects</span>
-        </article>
+        <% if (categories && categories.length > 0) { %>
+            <% categories.forEach(category => { %>
+                <article class="category-card">
+                    <div class="category-icon"><%= category.icon %></div>
+                    <h2 class="category-title"><%= category.name %></h2>
+                    <p class="category-desc"><%= category.description %></p>
+                    <span class="category-tag"><%= category.project_count !== undefined ? category.project_count : 0 %> Active Projects</span>
+                </article>
+            <% }); %>
+        <% } else { %>
+            <p>No categories found.</p>
+        <% } %>
     </div>
 </main>
 <%- include('partials/footer') %>

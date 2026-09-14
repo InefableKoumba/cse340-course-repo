@@ -1,0 +1,171 @@
+======================================================================
+Week 01 Coaching Session Transcript
+Student: Inefable
+Coach: Learning Coach and Software Mentor
+Topics Covered:
+  1. Express Routing (server.js)
+  2. JavaScript Language Principles (Modern JS, Callbacks, Template Literals)
+  3. EJS Partials and Pages (footer.ejs, DRY, dynamic evaluation)
+  4. Frontend CSS (Responsive design, CSS Grid, Flexbox media queries)
+======================================================================
+
+[COACH]:
+Welcome! Just to be clear from the start, this is a coaching session, not a test. It is perfectly okay—and even encouraged—to say 'I don't know' or 'I made a mistake.' That's the fastest way we'll learn today.
+
+I'm your Learning Coach and Software Mentor, and I'm excited to walk through your assignment with you today.
+
+To get started, what is your name?
+
+----------------------------------------------------------------------
+[STUDENT]:
+Inefable
+
+----------------------------------------------------------------------
+[COACH]:
+It's great to meet you, Inefable! Welcome to our coaching session. Remember, this is a completely safe learning space where questions, mistakes, and exploring new ideas are all part of the process.
+
+Today, we'll explore four main areas: **Express Routing**, **JavaScript Language Principles**, **EJS Partials & Pages**, and **Frontend CSS**.
+
+Let's kick things off with our first topic: **Express Routing**. Could you paste a non-trivial Node.js / Express routing snippet from your `server.js` file into our chat?
+
+----------------------------------------------------------------------
+[STUDENT]:
+app.get("/projects", async (req, res) => {
+  const title = "Service Projects";
+  res.render("projects", { title });
+});
+
+----------------------------------------------------------------------
+[COACH]:
+Thanks for sharing that route handler, Inefable!
+
+Looking at this code snippet, could you walk me through what happens under the hood when a user navigates to `/projects` in their browser, and why you pass `{ title }` into `res.render()`?
+
+----------------------------------------------------------------------
+[STUDENT]:
+When users navigate to /projects the server receives the request, process it then respond by sending a html file. Under the hood, we are using a template language, so the expression res.render() is actually used to send the file that contains the template of that specific page and {title} is pass to that expression to dynamically pass the title of the page.
+
+----------------------------------------------------------------------
+[COACH]:
+That is a spot-on explanation! You clearly understand how Express catches the HTTP GET request, injects data into the view template, and sends back the rendered HTML to the client.
+
+Now let's move on to our second topic: **Topic 2: JavaScript Language Principles**.
+
+Could you share a snippet of JavaScript code (for example, from your server or helper logic) where you use language features like asynchronous functions, modern syntax, or object manipulation, and we'll discuss the principles at work?
+
+----------------------------------------------------------------------
+[STUDENT]:
+app.listen(PORT, () => {
+  console.log(`Server is running at http://127.0.0.1:${PORT}`);
+  console.log(`Environment: ${NODE_ENV}`);
+});
+
+----------------------------------------------------------------------
+[COACH]:
+Great snippet! In this code, we can see modern JavaScript syntax at work.
+
+Could you explain what role the `() => { ... }` arrow function syntax plays here as a callback in `app.listen`, and why template literals (the backticks with `${...}`) are useful in modern JavaScript?
+
+----------------------------------------------------------------------
+[STUDENT]:
+() => { ... } is used to pass a function directly as a callback without declaring it first elsewhere. It contains a code block that will be run automatically. Templates literal are very useful for concatening string and variables. Instead of using "+" to concatenate many string, we can just have one string wrapped with `` then use ${myvariable} syntaxt inside the string to add variables to the final string.
+
+----------------------------------------------------------------------
+[COACH]:
+Excellent explanation! Arrow functions provide a clean, concise inline syntax for asynchronous callbacks, and template literals make string interpolation much more readable and maintainable compared to traditional string concatenation.
+
+Now let's dive into **Topic 3: EJS Partials and Pages**.
+
+Could you share a snippet from one of your EJS files (such as a page or partial like `categories.ejs` or a layout component) that shows how you structure and compose your views?
+
+----------------------------------------------------------------------
+[STUDENT]:
+This is from footer.ejs    
+
+</div><!-- /.site-wrapper -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <p>&copy; <%= new Date().getFullYear() %> CSE 340 Service Network. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+
+</html>
+
+----------------------------------------------------------------------
+[COACH]:
+Nice snippet!
+
+Looking at this `footer.ejs` partial, why is it beneficial to separate common HTML elements like footers and headers into partials instead of putting them directly into every single page template, and what is the `<%= ... %>` tag doing on line 4?
+
+----------------------------------------------------------------------
+[STUDENT]:
+It's benecial for code reusability and dynamic rendering. The syntaxt <%= ... %> as feature from our template language used to pass actual javascript code block that will be executed.
+
+----------------------------------------------------------------------
+[COACH]:
+Exactly right! Partials keep your code DRY (Don't Repeat Yourself) so that changes in one place update across the entire site, and `<%= ... %>` evaluates the JavaScript expression (like fetching the current year dynamically) and escapes the output directly into the HTML.
+
+Now let's move to our fourth and final topic: **Topic 4: Frontend CSS**.
+
+Could you share a non-trivial CSS snippet from your stylesheet (such as layout styles, responsive design rules, or custom component styling)?
+
+----------------------------------------------------------------------
+[STUDENT]:
+@media (max-width: 600px) {
+  .nav-container {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .nav-links {
+    justify-content: center;
+    gap: 0.25rem;
+  }
+
+  .nav-links li a {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.9rem;
+  }
+
+  .page-title {
+    font-size: 1.85rem;
+  }
+
+  .page-main {
+    padding: 1.75rem 1rem 3rem;
+  }
+
+  .organizations-grid,
+  .projects-grid,
+  .categories-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+----------------------------------------------------------------------
+[COACH]:
+Great choice of snippet! Responsive design is essential for modern web development.
+
+In this media query, what is the purpose of changing `.organizations-grid, .projects-grid, .categories-grid` to `grid-template-columns: 1fr;` on screens 600px wide or smaller, and how does `flex-direction: column` help the navigation bar on mobile?
+
+----------------------------------------------------------------------
+[STUDENT]:
+I am not very sure about how to explain it, help me
+
+----------------------------------------------------------------------
+[COACH]:
+That's completely fine and a great moment to learn together! 
+
+Here is a simple breakdown:
+1. **`grid-template-columns: 1fr;`**: On desktop screens, your grid items might sit side-by-side in multiple columns (like 2, 3, or 4 across). But on mobile screens (600px wide or narrower), multiple columns would get squished and unreadable. Setting `grid-template-columns: 1fr;` tells CSS to collapse the grid into **a single full-width column**, stacking each card cleanly on top of the other.
+2. **`flex-direction: column`**: By default, Flexbox aligns items horizontally side-by-side (`row`). On narrow mobile screens, horizontal navbars can cause awkward overflow or text wrapping. Changing to `flex-direction: column` stacks the navigation elements vertically (one above another) with nice spacing.
+
+Does this idea of converting side-by-side elements into vertical stacks for smaller screens make sense, or would you like to explore any part of that further?
+
+----------------------------------------------------------------------
+[STUDENT]:
+Yes, thanks
+======================================================================

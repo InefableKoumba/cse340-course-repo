@@ -6,47 +6,25 @@
     </div>
 
     <div class="organizations-grid">
-        <article class="organization-card">
-            <div class="org-image-wrapper">
-                <img src="/images/brightfuture-logo.png" alt="BrightFuture Builders logo">
-            </div>
-            <div class="org-content">
-                <h2 class="org-title">BrightFuture Builders</h2>
-                <p class="org-desc">Empowering youth and under-resourced neighborhoods through housing initiatives, mentoring, and skill development.</p>
-                <div class="org-contact">
-                    <span class="contact-label">Contact:</span>
-                    <a href="mailto:info@brightfuture.org" class="contact-link">info@brightfuture.org</a>
-                </div>
-            </div>
-        </article>
-
-        <article class="organization-card">
-            <div class="org-image-wrapper">
-                <img src="/images/greenharvest-logo.png" alt="GreenHarvest Growers logo">
-            </div>
-            <div class="org-content">
-                <h2 class="org-title">GreenHarvest Growers</h2>
-                <p class="org-desc">Cultivating sustainable community urban gardens, providing fresh organic produce, and agricultural education.</p>
-                <div class="org-contact">
-                    <span class="contact-label">Contact:</span>
-                    <a href="mailto:contact@greenharvest.org" class="contact-link">contact@greenharvest.org</a>
-                </div>
-            </div>
-        </article>
-
-        <article class="organization-card">
-            <div class="org-image-wrapper">
-                <img src="/images/unityserve-logo.png" alt="UnityServe Volunteers logo">
-            </div>
-            <div class="org-content">
-                <h2 class="org-title">UnityServe Volunteers</h2>
-                <p class="org-desc">Mobilizing active volunteers for emergency food relief, family support services, and disaster assistance.</p>
-                <div class="org-contact">
-                    <span class="contact-label">Contact:</span>
-                    <a href="mailto:hello@unityserve.org" class="contact-link">hello@unityserve.org</a>
-                </div>
-            </div>
-        </article>
+        <% if (organizations && organizations.length > 0) { %>
+            <% organizations.forEach(org => { %>
+                <article class="organization-card">
+                    <div class="org-image-wrapper">
+                        <img src="/images/<%= org.logo_filename %>" alt="<%= org.name %> logo">
+                    </div>
+                    <div class="org-content">
+                        <h2 class="org-title"><%= org.name %></h2>
+                        <p class="org-desc"><%= org.description %></p>
+                        <div class="org-contact">
+                            <span class="contact-label">Contact:</span>
+                            <a href="mailto:<%= org.contact_email %>" class="contact-link"><%= org.contact_email %></a>
+                        </div>
+                    </div>
+                </article>
+            <% }); %>
+        <% } else { %>
+            <p>No organizations found.</p>
+        <% } %>
     </div>
 </main>
 <%- include('partials/footer') %>
