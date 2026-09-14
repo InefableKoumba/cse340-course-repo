@@ -1,0 +1,151 @@
+======================================================================
+Week 02 Coaching Session Transcript
+Student: Inefable
+Coach: Learning Coach and Software Mentor
+Topics Covered:
+  1. Relational Database Design and Structure (setup.sql, Foreign Keys, Joins)
+  2. Server-Side Data Access Logic (projects.js, db.query, Async/Await)
+  3. Express Server Logic and Routing (server.js, Route Handlers, Error Handling)
+  4. Client-Side Rendering (projects.ejs, EJS tags, XSS protection)
+======================================================================
+
+[COACH]:
+Welcome! Just to be clear from the start, this is a coaching session, not a test. It is perfectly okay—and even encouraged—to say 'I don't know' or 'I made a mistake.' That's the fastest way we'll learn today.
+
+I'm your Learning Coach and Software Mentor, and I'm excited to walk through your assignment with you today.
+
+To get started, what is your name?
+
+----------------------------------------------------------------------
+[STUDENT]:
+Inefable
+
+----------------------------------------------------------------------
+[COACH]:
+Great to meet you, Inefable! Since we are working in this chat interface, whenever we discuss specific code, please paste the relevant snippet right into our chat.
+
+Let's start with Topic 1: Relational Database Design and Structure. Could you share a non-trivial SQL query from your project and explain the purpose of the tables involved and their relationships?
+
+----------------------------------------------------------------------
+[STUDENT]:
+Sure! Here is the query I use in my project to get all service projects with their organization and category details:
+
+SELECT 
+  p.project_id,
+  p.title,
+  p.description,
+  p.location,
+  p.date,
+  o.name AS organization_name,
+  c.name AS category_name
+FROM service_projects p
+JOIN organizations o ON p.organization_id = o.organization_id
+LEFT JOIN categories c ON p.category_id = c.category_id
+ORDER BY p.date ASC;
+
+In our database:
+- organizations stores the partner groups (like BrightFuture Builders).
+- service_projects stores the actual volunteer events.
+- categories stores types of service (like Environmental or Educational).
+
+One organization can create many projects, so that is a one-to-many relationship using organization_id. We use an INNER JOIN with organizations because every project must have an organization. We use a LEFT JOIN with categories just in case a project doesn't have a category set yet, so it won't disappear from our list.
+
+----------------------------------------------------------------------
+[COACH]:
+Excellent explanation of the database structure and the difference between your joins, Inefable!
+
+Moving on to Topic 2: Server-Side Data Access Logic, could you paste the Node.js function that executes this database query and explain how the data flows through it?
+
+----------------------------------------------------------------------
+[STUDENT]:
+Here is the function from src/models/projects.js:
+
+export async function getAllProjects() {
+  try {
+    const queryText = `
+      SELECT 
+        p.project_id,
+        p.organization_id,
+        p.category_id,
+        p.title,
+        p.description,
+        p.location,
+        p.date,
+        o.name AS organization_name,
+        o.logo_filename,
+        c.name AS category_name
+      FROM service_projects p
+      JOIN organizations o ON p.organization_id = o.organization_id
+      LEFT JOIN categories c ON p.category_id = c.category_id
+      ORDER BY p.date ASC;
+    `;
+    const result = await db.query(queryText);
+    return result.rows;
+  } catch (error) {
+    console.error("Error retrieving service projects:", error);
+    throw error;
+  }
+}
+
+This function sends our SQL query to PostgreSQL using db.query(). It waits for the database to finish using await, and then returns result.rows, which is an array of project objects. If something breaks, the catch block logs the error and throws it so our route handler knows there was a problem.
+
+----------------------------------------------------------------------
+[COACH]:
+Spot on! That is very clear data access handling.
+
+Now for Topic 3: Express Server Logic and Routing, can you show me the Express route handler where this function is called and describe how it routes the request?
+
+----------------------------------------------------------------------
+[STUDENT]:
+Here is the /projects route from server.js:
+
+app.get("/projects", async (req, res) => {
+  try {
+    const title = "Service Projects";
+    const projects = await getAllProjects();
+    res.render("projects", { title, projects });
+  } catch (error) {
+    console.error("Error loading service projects:", error);
+    res.status(500).send("Error retrieving service projects");
+  }
+});
+
+When a user visits /projects in their browser, Express catches that GET request. The handler calls getAllProjects() to get the data from the database, and then uses res.render() to pass the projects list and page title into our EJS view template. If the database fails, it returns a 500 server error message.
+
+----------------------------------------------------------------------
+[COACH]:
+That route handling logic is clean and well-structured.
+
+Finally, let's talk about Topic 4: Client-Side Rendering. Could you share a snippet of your EJS template that displays this data, and explain why you chose the specific EJS tags you used?
+
+----------------------------------------------------------------------
+[STUDENT]:
+Here is a snippet from src/views/projects.ejs:
+
+<div class="projects-grid">
+  <% if (projects && projects.length > 0) { %>
+    <% projects.forEach(project => { %>
+      <article class="project-card">
+        <div class="project-badge"><%= project.organization_name %></div>
+        <h2 class="project-title"><%= project.title %></h2>
+        <p class="project-desc"><%= project.description %></p>
+        <div class="project-meta">
+          <span>📍 <%= project.location %></span>
+        </div>
+      </article>
+    <% }); %>
+  <% } else { %>
+    <p>No service projects found.</p>
+  <% } %>
+</div>
+
+I used two kinds of tags:
+- <% %> for JavaScript logic like if conditions and the forEach loop. These tags do work behind the scenes and don't print any text directly onto the page.
+- <%= %> for outputting values like <%= project.title %> and <%= project.organization_name %>. This safely outputs the data as plain text and escapes special characters so users can't inject malicious code (preventing XSS attacks).
+
+----------------------------------------------------------------------
+[COACH]:
+That was a fantastic walkthrough across all four topics, Inefable! You clearly explained relational table joins, database queries with pg, Express route handling, and how EJS securely renders data to the browser.
+
+We have completed all mandatory discussion topics, so that wraps up our coaching session today—great work!
+======================================================================
