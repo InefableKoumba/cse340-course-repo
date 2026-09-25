@@ -1,0 +1,170 @@
+======================================================================
+Week 03 Coaching Session Transcript
+Student: Inefable
+Coach: Learning Coach and Software Mentor
+Topics Covered:
+  1. Models (Parameterized SQL queries, db.query, data access)
+  2. Views (EJS templates, inserting dynamic data into links)
+  3. Controllers (Route handlers, route parameters req.params)
+  4. Error handling (Centralized error handling, 404 & 500 status pages)
+======================================================================
+
+[COACH]:
+Welcome! Just to be clear from the start, this is a coaching session, not a test. It is perfectly okay—and even encouraged—to say 'I don't know' or 'I made a mistake.' That's the fastest way we'll learn today.
+
+I'm your Learning Coach and Software Mentor, and I'm excited to walk through your assignment with you today.
+
+To get started, what is your name?
+
+----------------------------------------------------------------------
+[STUDENT]:
+Inefable
+
+----------------------------------------------------------------------
+[COACH]:
+Great to meet you, Inefable! Since we are working in this chat interface, whenever we discuss specific code, please paste the relevant snippet right into our chat.
+
+Let's start with Topic 1: Models. Could you share a non-trivial code snippet from one of your model files where a function accepts a parameter and uses it inside an SQL query, and explain how it works?
+
+----------------------------------------------------------------------
+[STUDENT]:
+Here is the getProjectDetails function from src/models/projects.js:
+
+const getProjectDetails = async (id) => {
+  const query = `
+    SELECT 
+      p.project_id,
+      p.title,
+      p.description,
+      p.date,
+      p.location,
+      p.organization_id,
+      o.name AS organization_name
+    FROM service_projects p
+    JOIN organizations o ON p.organization_id = o.organization_id
+    WHERE p.project_id = $1;
+  `;
+
+  const queryParams = [id];
+  const result = await db.query(query, queryParams);
+  return result.rows.length > 0 ? result.rows[0] : null;
+};
+
+In this function:
+- It takes an id parameter to find one specific project.
+- In the SQL query, we use $1 as a placeholder instead of putting the id variable directly into the string. This is a parameterized query, which protects our database from SQL injection attacks.
+- We pass [id] in queryParams to db.query(). The database library safely replaces $1 with the actual value.
+- We check if result.rows has any items. If it does, we return the first row (the project object), or null if no project was found.
+
+----------------------------------------------------------------------
+[COACH]:
+Excellent explanation, Inefable! Using parameterized queries ($1) is essential for security against SQL injection, and returning null when nothing is found is clean practice.
+
+Now let's move on to Topic 2: Views. Could you provide a non-trivial EJS snippet from your views that inserts dynamic data into a link (href), and explain what it does?
+
+----------------------------------------------------------------------
+[STUDENT]:
+Here is a snippet from src/views/projects.ejs where we create links for each project card:
+
+<article class="project-card">
+  <div class="project-badge">
+    <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a>
+  </div>
+  <h2 class="project-title">
+    <a href="/project/<%= project.project_id %>"><%= project.title %></a>
+  </h2>
+  <p class="project-org">
+    Sponsored by: <a href="/organization/<%= project.organization_id %>" class="org-inline-link"><%= project.organization_name %></a>
+  </p>
+  <p class="project-desc"><%= project.description %></p>
+  <div class="project-meta">
+    <span>📍 <%= project.location %></span>
+    <span>📅 <%= formattedDate %></span>
+  </div>
+  <div class="card-action">
+    <a href="/project/<%= project.project_id %>" class="btn btn-primary btn-sm">View Project</a>
+  </div>
+</article>
+
+In this code:
+- We loop through projects and use EJS tags to inject data into HTML links.
+- In href="/project/<%= project.project_id %>", the <%= %> tag outputs the unique ID of the project directly into the URL path, like /project/1 or /project/2.
+- We do the same for the organization link with href="/organization/<%= project.organization_id %>".
+- When a user clicks either link, the browser makes a GET request to that specific URL with the ID in the route, allowing us to load that item's detail page.
+
+----------------------------------------------------------------------
+[COACH]:
+Spot on! That is a classic and effective pattern for building RESTful detail links dynamically in EJS.
+
+Now for Topic 3: Controllers. Could you share a route handler from your controllers that handles a route parameter, and explain how it receives and processes that parameter?
+
+----------------------------------------------------------------------
+[STUDENT]:
+Here is the showProjectDetailsPage function from src/controllers/projects.js:
+
+const showProjectDetailsPage = async (req, res) => {
+    const projectId = req.params.id;
+    const project = await getProjectDetails(projectId);
+    const categories = await getCategoriesByProjectId(projectId);
+    const title = project ? project.title : 'Project Details';
+
+    res.render('project', { title, project, categories });
+};
+
+In our router (src/routes.js), we have the route defined as router.get('/project/:id', showProjectDetailsPage). 
+
+Here is how the controller works:
+- When a user goes to /project/5, Express extracts the number 5 from the URL and puts it into req.params.id.
+- The controller saves that into projectId.
+- It calls our model functions getProjectDetails(projectId) and getCategoriesByProjectId(projectId) to fetch the project data and its categories from the database.
+- It sets the page title to the project's title if found.
+- Finally, it calls res.render('project', ...) to send the data to the project.ejs template so the user sees the full detail page.
+
+----------------------------------------------------------------------
+[COACH]:
+That is a crystal clear explanation of how the controller acts as the middleman between the route parameter, the models, and the rendered view.
+
+Lastly, let's discuss Topic 4: Error handling. What is your strategy for handling errors across your application, including 404 or 500 status pages? Please share a relevant code snippet showing how you handle this.
+
+----------------------------------------------------------------------
+[STUDENT]:
+Here is the error-handling code from our server.js:
+
+// Catch-all route for 404 errors
+app.use((req, res, next) => {
+    const err = new Error('Page Not Found');
+    err.status = 404;
+    next(err);
+});
+
+// Global error handler
+app.use((err, req, res, next) => {
+    // Log error details for debugging
+    console.error('Error occurred:', err.message);
+    console.error('Stack trace:', err.stack);
+    
+    // Determine status and template
+    const status = err.status || 500;
+    const template = status === 404 ? '404' : '500';
+    
+    // Prepare data for the template
+    const context = {
+        title: status === 404 ? 'Page Not Found' : 'Server Error',
+        error: err.message,
+        stack: err.stack
+    };
+    
+    // Render the appropriate error template
+    res.status(status).render(`errors/${template}`, context);
+});
+
+Our strategy has two main parts:
+1. Handling 404 errors: If a user asks for a page or URL that does not match any routes in our router, the request falls through to the 404 catch-all middleware. It creates an error object with status 404 and passes it to next(err).
+2. Centralized 500/global error handler: At the very bottom of server.js, we have Express error middleware with four parameters (err, req, res, next). It catches any error passed via next(err) or thrown in route handlers. It logs the error message and stack trace to the console for the developer. Then it sets the HTTP status code (404 or default 500) and renders our friendly custom error template (errors/404.ejs or errors/500.ejs). This way, the server never crashes, and the user gets a friendly message instead of a broken screen.
+
+----------------------------------------------------------------------
+[COACH]:
+Outstanding walkthrough, Inefable! You covered parameterized queries in your models, dynamic URL creation in EJS views, route parameters in controllers, and a robust centralized error handling architecture with custom 404 and 500 status views.
+
+We have thoroughly covered all four topics, which wraps up our coaching session for Week 3. Great job!
+======================================================================
