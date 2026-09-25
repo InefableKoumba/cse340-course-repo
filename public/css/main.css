@@ -17,7 +17,7 @@
   --color-bg: #f8fafc;
   --color-surface: #ffffff;
   --color-surface-muted: #f1f5f9;
-  
+
   --color-text-main: #0f172a;
   --color-text-muted: #475569;
   --color-text-subtle: #64748b;
@@ -25,14 +25,19 @@
   --color-border-hover: #cbd5e1;
 
   /* Typography */
-  --font-family-base: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  
+  --font-family-base:
+    "Plus Jakarta Sans", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, sans-serif;
+
   /* Shadows & Elevation */
   --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-hover: 0 12px 24px -4px rgba(30, 58, 138, 0.12), 0 6px 12px -4px rgba(0, 0, 0, 0.04);
+  --shadow-lg:
+    0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-hover:
+    0 12px 24px -4px rgba(30, 58, 138, 0.12),
+    0 6px 12px -4px rgba(0, 0, 0, 0.04);
 
   /* Radius */
   --radius-sm: 8px;
@@ -126,7 +131,11 @@ a:hover {
 }
 
 .brand-badge {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary),
+    var(--color-accent)
+  );
   color: #ffffff;
   font-weight: 800;
   font-size: 0.85rem;
@@ -313,6 +322,11 @@ a:hover {
   transform: translateY(-1px);
 }
 
+.btn-sm {
+  padding: 0.45rem 1rem;
+  font-size: 0.85rem;
+}
+
 .banner-section {
   display: flex;
   justify-content: center;
@@ -327,7 +341,9 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  transition:
+    transform var(--transition-normal),
+    box-shadow var(--transition-normal);
 }
 
 .logo-card:hover {
@@ -430,6 +446,70 @@ a:hover {
 }
 
 /* --------------------------------------------------------------------------
+   Organization Details Page Styles
+   -------------------------------------------------------------------------- */
+.org-detail-card {
+  margin-bottom: 2.5rem;
+}
+
+.org-projects-container {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.section-subtitle {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--color-primary-light);
+}
+
+.projects-list-simple {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.project-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.project-list-item:hover {
+  border-color: var(--color-primary);
+  transform: translateX(4px);
+}
+
+.project-title-link {
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--color-primary);
+}
+
+.project-title-link:hover {
+  text-decoration: underline;
+}
+
+.project-list-meta {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+/* --------------------------------------------------------------------------
    Projects Page Styles
    -------------------------------------------------------------------------- */
 .projects-grid {
@@ -483,15 +563,103 @@ a:hover {
   flex-grow: 1;
 }
 
-.project-meta {
+.project-org {
+  font-size: 0.9rem;
+  color: var(--color-text-subtle);
+  margin-bottom: 0.75rem;
+}
+
+.org-inline-link {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.org-inline-link:hover {
+  text-decoration: underline;
+}
+
+.project-badge a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.project-badge a:hover {
+  text-decoration: underline;
+}
+
+/* Project Details Page Styles */
+.project-detail-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 2.5rem;
+  box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--color-border);
-  font-size: 0.875rem;
+}
+
+.project-meta-box {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.25rem;
+  padding: 1.25rem;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  margin: 1.5rem 0 2rem;
+}
+
+.meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.meta-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
   color: var(--color-text-subtle);
-  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.meta-value {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.meta-value .org-link {
+  color: var(--color-primary);
+}
+
+.meta-value .org-link:hover {
+  text-decoration: underline;
+}
+
+.project-detail-body {
+  margin-bottom: 2rem;
+}
+
+.project-detail-body h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin-bottom: 0.75rem;
+}
+
+.project-desc-full {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
+
+.project-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border);
 }
 
 /* --------------------------------------------------------------------------
@@ -549,6 +717,83 @@ a:hover {
   background-color: var(--color-accent-soft);
   padding: 0.25rem 0.6rem;
   border-radius: var(--radius-pill);
+}
+
+.category-icon a {
+  text-decoration: none;
+}
+
+.category-title a {
+  color: var(--color-text-main);
+  transition: color var(--transition-fast);
+}
+
+.category-title a:hover {
+  color: var(--color-primary);
+}
+
+.category-card-footer {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.card-action {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Category Details Page Styles */
+.category-header {
+  margin-bottom: 2.5rem;
+}
+
+.category-hero-icon {
+  display: inline-block;
+  font-size: 3.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.category-projects-section {
+  margin-top: 1.5rem;
+}
+
+/* Category Tags on Project Details */
+.project-category-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.75rem 0 1.25rem;
+}
+
+.category-tag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+  border: 1px solid var(--color-border);
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-pill);
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.category-tag-badge:hover {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  transform: translateY(-1px);
 }
 
 /* --------------------------------------------------------------------------

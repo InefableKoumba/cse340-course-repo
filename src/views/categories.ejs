@@ -9,10 +9,17 @@
         <% if (categories && categories.length > 0) { %>
             <% categories.forEach(category => { %>
                 <article class="category-card">
-                    <div class="category-icon"><%= category.icon %></div>
-                    <h2 class="category-title"><%= category.name %></h2>
+                    <div class="category-icon">
+                        <a href="/category/<%= category.category_id %>"><%= category.icon %></a>
+                    </div>
+                    <h2 class="category-title">
+                        <a href="/category/<%= category.category_id %>"><%= category.name %></a>
+                    </h2>
                     <p class="category-desc"><%= category.description %></p>
-                    <span class="category-tag"><%= category.project_count !== undefined ? category.project_count : 0 %> Active Projects</span>
+                    <div class="category-card-footer">
+                        <span class="category-tag"><%= category.project_count !== undefined ? category.project_count : 0 %> Active Projects</span>
+                        <a href="/category/<%= category.category_id %>" class="btn btn-primary btn-sm">View Category</a>
+                    </div>
                 </article>
             <% }); %>
         <% } else { %>

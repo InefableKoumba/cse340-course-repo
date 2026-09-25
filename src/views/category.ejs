@@ -1,0 +1,61 @@
+<%- include('partials/header') %>
+<main class="page-main category-details-page">
+    <% if (category) { %>
+        <div class="page-header category-header">
+            <span class="category-hero-icon"><%= category.icon || '🏷️' %></span>
+            <h1 class="page-title"><%= category.name %></h1>
+            <p class="page-description"><%= category.description %></p>
+        </div>
+
+        <section class="category-projects-section">
+            <h2 class="section-subtitle">Service Projects in this Category</h2>
+            <% if (projects && projects.length > 0) { %>
+                <div class="projects-grid">
+                    <% projects.forEach(project => { %>
+                        <% 
+                           const formattedDate = project.date ? new Date(project.date).toLocaleDateString('en-US', {
+                               year: 'numeric',
+                               month: 'long',
+                               day: 'numeric'
+                           }) : '';
+                        %>
+                        <article class="project-card">
+                            <h2 class="project-title">
+                                <a href="/project/<%= project.project_id %>"><%= project.title %></a>
+                            </h2>
+                            <% if (project.organization_name) { %>
+                                <p class="project-org">
+                                    Sponsored by: 
+                                    <a href="/organization/<%= project.organization_id %>" class="org-inline-link">
+                                        <%= project.organization_name %>
+                                    </a>
+                                </p>
+                            <% } %>
+                            <p class="project-desc"><%= project.description %></p>
+                            <div class="project-meta">
+                                <% if (project.location) { %>
+                                    <span>📍 <%= project.location %></span>
+                                <% } %>
+                                <% if (formattedDate) { %>
+                                    <span>📅 <%= formattedDate %></span>
+                                <% } %>
+                            </div>
+                            <div class="card-action">
+                                <a href="/project/<%= project.project_id %>" class="btn btn-primary btn-sm">View Project</a>
+                            </div>
+                        </article>
+                    <% }); %>
+                </div>
+            <% } else { %>
+                <p class="empty-state">No service projects found in this category.</p>
+            <% } %>
+        </section>
+    <% } else { %>
+        <div class="not-found-container">
+            <h2>Category Not Found</h2>
+            <p>The requested category could not be found.</p>
+            <p><a href="/categories" class="btn btn-secondary">Back to Categories</a></p>
+        </div>
+    <% } %>
+</main>
+<%- include('partials/footer') %>

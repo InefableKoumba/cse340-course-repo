@@ -1,0 +1,47 @@
+<%- include('partials/header') %>
+<main class="page-main organization-details-page">
+    <% if (organizationDetails) { %>
+        <article class="organization-card org-detail-card">
+            <div class="org-image-wrapper">
+                <img src="/images/<%= organizationDetails.logo_filename %>" alt="<%= organizationDetails.name %> logo">
+            </div>
+            <div class="org-content">
+                <h2 class="org-title"><%= organizationDetails.name %></h2>
+                <p class="org-desc"><%= organizationDetails.description %></p>
+                <% if (organizationDetails.contact_email) { %>
+                    <div class="org-contact">
+                        <span class="contact-label">Contact:</span>
+                        <a href="mailto:<%= organizationDetails.contact_email %>" class="contact-link"><%= organizationDetails.contact_email %></a>
+                    </div>
+                <% } %>
+            </div>
+        </article>
+
+        <section class="org-projects-container">
+            <h3 class="section-subtitle">Service Projects</h3>
+            <% if (projects && projects.length > 0) { %>
+                <ul class="projects-list-simple">
+                    <% projects.forEach(project => { %>
+                        <li class="project-list-item">
+                            <a href="/project/<%= project.project_id %>" class="project-title-link">
+                                <%= project.title %>
+                            </a>
+                            <% if (project.location) { %>
+                                <span class="project-list-meta">📍 <%= project.location %></span>
+                            <% } %>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <p class="empty-state">No service projects are currently associated with this organization.</p>
+            <% } %>
+        </section>
+    <% } else { %>
+        <div class="not-found-container">
+            <h2>Organization Not Found</h2>
+            <p>The requested organization could not be found.</p>
+            <p><a href="/organizations" class="btn btn-secondary">Return to Organizations</a></p>
+        </div>
+    <% } %>
+</main>
+<%- include('partials/footer') %>

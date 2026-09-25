@@ -7,17 +7,22 @@
 
     <div class="organizations-grid">
         <% if (organizations && organizations.length > 0) { %>
-            <% organizations.forEach(org => { %>
+            <% organizations.forEach(organization => { %>
                 <article class="organization-card">
                     <div class="org-image-wrapper">
-                        <img src="/images/<%= org.logo_filename %>" alt="<%= org.name %> logo">
+                        <a href="/organization/<%= organization.organization_id %>">
+                            <img src="/images/<%= organization.logo_filename %>" alt="<%= organization.name %> logo">
+                        </a>
                     </div>
                     <div class="org-content">
-                        <h2 class="org-title"><%= org.name %></h2>
-                        <p class="org-desc"><%= org.description %></p>
+                        <h2 class="org-title"><a href="/organization/<%= organization.organization_id %>"><%= organization.name %></a></h2>
+                        <p class="org-desc"><%= organization.description %></p>
                         <div class="org-contact">
                             <span class="contact-label">Contact:</span>
-                            <a href="mailto:<%= org.contact_email %>" class="contact-link"><%= org.contact_email %></a>
+                            <a href="mailto:<%= organization.contact_email %>" class="contact-link"><%= organization.contact_email %></a>
+                        </div>
+                        <div class="card-action">
+                            <a href="/organization/<%= organization.organization_id %>" class="btn btn-primary btn-sm">View Organization</a>
                         </div>
                     </div>
                 </article>

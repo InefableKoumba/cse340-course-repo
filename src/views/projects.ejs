@@ -16,17 +16,27 @@
                    });
                 %>
                 <article class="project-card">
-                    <div class="project-badge"><%= project.organization_name %></div>
-                    <h2 class="project-title"><%= formattedDate %>: <%= project.title %> (<%= project.organization_name %>)</h2>
+                    <div class="project-badge">
+                        <a href="/organization/<%= project.organization_id %>"><%= project.organization_name %></a>
+                    </div>
+                    <h2 class="project-title">
+                        <a href="/project/<%= project.project_id %>"><%= project.title %></a>
+                    </h2>
+                    <p class="project-org">
+                        Sponsored by: <a href="/organization/<%= project.organization_id %>" class="org-inline-link"><%= project.organization_name %></a>
+                    </p>
                     <p class="project-desc"><%= project.description %></p>
                     <div class="project-meta">
                         <span>📍 <%= project.location %></span>
                         <span>📅 <%= formattedDate %></span>
                     </div>
+                    <div class="card-action">
+                        <a href="/project/<%= project.project_id %>" class="btn btn-primary btn-sm">View Project</a>
+                    </div>
                 </article>
             <% }); %>
         <% } else { %>
-            <p>No service projects found.</p>
+            <p>No upcoming service projects found.</p>
         <% } %>
     </div>
 </main>

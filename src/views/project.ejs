@@ -1,0 +1,63 @@
+<%- include('partials/header') %>
+<main class="page-main project-details-page">
+    <% if (project) { %>
+        <% 
+            const formattedDate = new Date(project.date).toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        %>
+        <article class="project-detail-card">
+            <span class="eyebrow">Service Opportunity</span>
+            <h1 class="page-title"><%= project.title %></h1>
+
+            <% if (categories && categories.length > 0) { %>
+                <div class="project-category-tags">
+                    <% categories.forEach(category => { %>
+                        <a href="/category/<%= category.category_id %>" class="category-tag-badge">
+                            <%= category.icon ? category.icon + ' ' : '' %><%= category.name %>
+                        </a>
+                    <% }); %>
+                </div>
+            <% } %>
+            
+            <div class="project-meta-box">
+                <div class="meta-item">
+                    <span class="meta-label">📅 Date</span>
+                    <span class="meta-value"><%= formattedDate %></span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">📍 Location</span>
+                    <span class="meta-value"><%= project.location %></span>
+                </div>
+                <div class="meta-item">
+                    <span class="meta-label">🤝 Partner Organization</span>
+                    <span class="meta-value">
+                        <a href="/organization/<%= project.organization_id %>" class="org-link">
+                            <%= project.organization_name %>
+                        </a>
+                    </span>
+                </div>
+            </div>
+
+            <div class="project-detail-body">
+                <h2>About This Project</h2>
+                <p class="project-desc-full"><%= project.description %></p>
+            </div>
+
+            <div class="project-actions">
+                <a href="/projects" class="btn btn-secondary">← Back to Upcoming Projects</a>
+                <a href="/organization/<%= project.organization_id %>" class="btn btn-primary">View Organization Details</a>
+            </div>
+        </article>
+    <% } else { %>
+        <div class="not-found-container">
+            <h2>Project Not Found</h2>
+            <p>The requested service project could not be found.</p>
+            <p><a href="/projects" class="btn btn-secondary">Back to Projects</a></p>
+        </div>
+    <% } %>
+</main>
+<%- include('partials/footer') %>
