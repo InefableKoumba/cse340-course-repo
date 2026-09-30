@@ -1,8 +1,13 @@
 <%- include('partials/header') %>
 <main class="page-main categories-page">
-    <div class="page-header">
-        <h1 class="page-title"><%= title %></h1>
-        <p class="page-description">Explore opportunities categorized by interest to discover how your unique passions and talents can best serve others:</p>
+    <div class="page-header page-header-with-action">
+        <div>
+            <h1 class="page-title"><%= title %></h1>
+            <p class="page-description">Explore opportunities categorized by interest to discover how your unique passions and talents can best serve others:</p>
+        </div>
+        <div class="header-action">
+            <a href="/new-category" class="btn btn-primary">+ Add Category</a>
+        </div>
     </div>
 
     <div class="categories-grid">

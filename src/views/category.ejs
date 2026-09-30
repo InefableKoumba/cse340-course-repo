@@ -1,10 +1,16 @@
 <%- include('partials/header') %>
 <main class="page-main category-details-page">
     <% if (category) { %>
-        <div class="page-header category-header">
-            <span class="category-hero-icon"><%= category.icon || '🏷️' %></span>
-            <h1 class="page-title"><%= category.name %></h1>
-            <p class="page-description"><%= category.description %></p>
+        <div class="page-header category-header page-header-with-action">
+            <div>
+                <span class="category-hero-icon"><%= category.icon || '🏷️' %></span>
+                <h1 class="page-title"><%= category.name %></h1>
+                <p class="page-description"><%= category.description %></p>
+            </div>
+            <div class="header-action">
+                <a href="/categories" class="btn btn-secondary">← All Categories</a>
+                <a href="/edit-category/<%= category.category_id %>" class="btn btn-primary">Edit Category</a>
+            </div>
         </div>
 
         <section class="category-projects-section">

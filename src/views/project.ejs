@@ -49,7 +49,8 @@
 
             <div class="project-actions">
                 <a href="/projects" class="btn btn-secondary">← Back to Upcoming Projects</a>
-                <a href="/organization/<%= project.organization_id %>" class="btn btn-primary">View Organization Details</a>
+                <a href="/organization/<%= project.organization_id %>" class="btn btn-secondary">View Organization Details</a>
+                <a href="/edit-project/<%= project.project_id %>" class="btn btn-primary">Edit Project</a>
             </div>
         </article>
     <% } else { %>

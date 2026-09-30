@@ -1,0 +1,55 @@
+<%- include('partials/header') %>
+<main class="page-main edit-category-page">
+    <div class="page-header">
+        <h1 class="page-title"><%= title %></h1>
+        <p class="page-description">Update the name for this service category below.</p>
+    </div>
+
+    <% if (errors && errors.length > 0) { %>
+        <div class="alert-box alert-error" role="alert">
+            <h2 class="alert-title">Please correct the following errors:</h2>
+            <ul class="alert-list">
+                <% errors.forEach(err => { %>
+                    <li><%= err %></li>
+                <% }); %>
+            </ul>
+        </div>
+    <% } %>
+
+    <div class="form-container">
+        <form action="/edit-category/<%= category.category_id %>" method="POST" class="category-form" novalidate>
+            <div class="form-group">
+                <label for="name" class="form-label">Category Name</label>
+                <input 
+                    type="text" 
+                    id="name" 
+                    name="name" 
+                    class="form-control" 
+                    value="<%= formData && formData.name !== undefined ? formData.name : category.name %>" 
+                    required 
+                    maxlength="100"
+                    placeholder="Enter category name"
+                >
+                <span class="field-hint">Required. Maximum 100 characters.</span>
+            </div>
+
+            <div class="form-group">
+                <label for="description" class="form-label">Description</label>
+                <textarea 
+                    id="description" 
+                    name="description" 
+                    class="form-control" 
+                    rows="4" 
+                    placeholder="Describe the focus and goals of this category..."
+                ><%= formData && formData.description !== undefined ? formData.description : (category.description || '') %></textarea>
+                <span class="field-hint">Optional overview of this category's service opportunities.</span>
+            </div>
+
+            <div class="form-actions">
+                <a href="/category/<%= category.category_id %>" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</main>
+<%- include('partials/footer') %>

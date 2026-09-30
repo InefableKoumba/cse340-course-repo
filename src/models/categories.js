@@ -100,10 +100,60 @@ export async function getProjectsByCategoryId(categoryId) {
   }
 }
 
+/**
+ * Insert a new category into the database
+ */
+export async function createCategory(categoryData) {
+  try {
+    const { name, description = '', icon = '🏷️' } = categoryData;
+    const queryText = `
+      INSERT INTO categories (name, description, icon)
+      VALUES ($1, $2, $3)
+      RETURNING *;
+    `;
+    const result = await db.query(queryText, [name, description, icon]);
+    if (result.rows.length === 0) {
+      throw new Error('Failed to create category.');
+    }
+    return result.rows[0];
+  } catch (error) {
+    console.error('Error creating category:', error);
+    throw error;
+  }
+}
+
+/**
+ * Update an existing category in the database
+ */
+export async function updateCategory(id, categoryData) {
+  try {
+    const { name, description = '' } = categoryData;
+    const queryText = `
+      UPDATE categories
+      SET 
+        name = $1,
+        description = $2
+      WHERE category_id = $3
+      RETURNING *;
+    `;
+    const result = await db.query(queryText, [name, description, id]);
+    if (result.rows.length === 0) {
+      throw new Error(`Category with ID ${id} not found or update failed.`);
+    }
+    return result.rows[0];
+  } catch (error) {
+    console.error(`Error updating category with ID ${id}:`, error);
+    throw error;
+  }
+}
+
 export default {
   getAllCategories,
   getCategoryById,
   getCategoryDetails,
   getCategoriesByProjectId,
   getProjectsByCategoryId,
+  createCategory,
+  updateCategory,
 };
+

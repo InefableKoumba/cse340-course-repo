@@ -170,6 +170,34 @@ const getProjectsByCategoryId = async (categoryId) => {
   return result.rows;
 };
 
+/**
+ * Update an existing service project in the database
+ */
+const updateProject = async (id, projectData) => {
+  const { title, description, location, date, organization_id } = projectData;
+
+  const query = `
+    UPDATE service_projects
+    SET 
+      title = $1,
+      description = $2,
+      location = $3,
+      date = $4,
+      organization_id = $5
+    WHERE project_id = $6
+    RETURNING *;
+  `;
+
+  const queryParams = [title, description, location, date, organization_id, id];
+  const result = await db.query(query, queryParams);
+
+  if (result.rows.length === 0) {
+    throw new Error(`Project with ID ${id} not found or update failed.`);
+  }
+
+  return result.rows[0];
+};
+
 export { 
   getAllProjects, 
   getProjectsByOrganizationId, 
@@ -177,7 +205,8 @@ export {
   getProjectDetails, 
   getProjectById,
   getCategoriesByProjectId,
-  getProjectsByCategoryId
+  getProjectsByCategoryId,
+  updateProject
 };
 
 export default {
@@ -188,6 +217,7 @@ export default {
   getProjectById,
   getCategoriesByProjectId,
   getProjectsByCategoryId,
+  updateProject,
 };
 
 
