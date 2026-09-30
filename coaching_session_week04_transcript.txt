@@ -1,0 +1,204 @@
+======================================================================
+Week 04 Coaching Session Transcript
+Student: Inefable
+Coach: Learning Coach and Software Mentor
+Topics Covered:
+  1. Handling Form Submissions (express.urlencoded, req.body, controller actions)
+  2. Forms for Updates (EJS form pre-population, value attributes, dropdown selection)
+  3. Sessions and Flash Messages (Session persistence, user feedback, flash alerts)
+  4. Server-Side Validation (Input validation, min/max rules, error state retention)
+======================================================================
+
+[COACH]:
+Welcome! Just to be clear from the start, this is a coaching session, not a test. It is perfectly okay—and even encouraged—to say 'I don't know' or 'I made a mistake.' That's the fastest way we'll learn today.
+
+I'm your Learning Coach and Software Mentor, and I'm excited to walk through your assignment with you today.
+
+To get started, what is your name?
+
+----------------------------------------------------------------------
+[STUDENT]:
+Inefable
+
+----------------------------------------------------------------------
+[COACH]:
+Great to meet you, Inefable! Since we are working in this chat interface, whenever we discuss specific code, please paste the relevant snippet right into our chat.
+
+Let's begin with Topic 1: Handling Form Submissions. Could you discuss the key issues surrounding how form submissions are handled in Express, share a non-trivial code snippet from your application showing form handling logic, and explain how data moves from the request body to the model?
+
+----------------------------------------------------------------------
+[STUDENT]:
+Here is the processEditProjectForm controller function from src/controllers/projects.js:
+
+const processEditProjectForm = async (req, res) => {
+    const projectId = req.params.id;
+    const { title, description, location, date, organization_id } = req.body;
+
+    await updateProject(projectId, {
+        title,
+        description,
+        location,
+        date,
+        organization_id
+    });
+
+    res.redirect(`/project/${projectId}`);
+};
+
+How it works:
+- First, we enable express.urlencoded({ extended: true }) in server.js so Express can parse POST data from HTML forms into req.body.
+- In this controller, we get the target ID from req.params.id and extract the submitted form fields from req.body using destructuring.
+- We then pass those values into our updateProject model function to safely run the SQL query.
+- After the database update finishes, we use res.redirect() to take the user back to the updated details page.
+
+----------------------------------------------------------------------
+[COACH]:
+Clear and concise! Setting up URL-encoded body parsing and redirecting after a POST request is standard best practice to prevent duplicate form submissions.
+
+Now let's move to Topic 2: Forms for Updates. When building forms that edit existing entities, what challenges arise, and how do you populate the existing values? Could you share a non-trivial EJS snippet used for an update form and explain it?
+
+----------------------------------------------------------------------
+[STUDENT]:
+Here is a snippet from src/views/edit-project.ejs:
+
+<form action="/edit-project/<%= project.project_id %>" method="POST" class="project-form">
+    <div class="form-group">
+        <label for="title" class="form-label">Project Title</label>
+        <input 
+            type="text" 
+            id="title" 
+            name="title" 
+            class="form-control" 
+            value="<%= project.title %>" 
+            required
+        >
+    </div>
+
+    <div class="form-group">
+        <label for="organization_id" class="form-label">Sponsoring Organization</label>
+        <select id="organization_id" name="organization_id" class="form-control" required>
+            <% organizations.forEach(org => { %>
+                <option 
+                    value="<%= org.organization_id %>" 
+                    <%= Number(org.organization_id) === Number(project.organization_id) ? 'selected' : '' %>
+                >
+                    <%= org.name %>
+                </option>
+            <% }); %>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="date" class="form-label">Project Date</label>
+        <input 
+            type="date" 
+            id="date" 
+            name="date" 
+            class="form-control" 
+            value="<%= dateValue %>" 
+            required
+        >
+    </div>
+</form>
+
+Key points:
+- The form action points to the specific item route using the ID: /edit-project/<%= project.project_id %>.
+- For text inputs, we set value="<%= project.title %>" so the user sees the existing data immediately.
+- For dropdowns, we loop through all organizations and use a ternary check to add the selected attribute when the IDs match.
+- For date inputs, we format the date string to YYYY-MM-DD so HTML5 date pickers can parse and display it properly.
+
+----------------------------------------------------------------------
+[COACH]:
+Spot on! Properly setting the selected option and formatting the date for HTML5 inputs are two of the most common hurdles with update forms, and you handled both cleanly.
+
+Next up is Topic 3: Sessions and Flash Messages. Could you discuss the purpose of sessions, how flash messages are used in web applications, and share a code snippet demonstrating session or flash message implementation?
+
+----------------------------------------------------------------------
+[STUDENT]:
+Here is the session and flash message setup from our server.js and src/controllers/categories.js:
+
+// In server.js: Session and flash middleware
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'cse340-secret-key-session',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { 
+        maxAge: 1000 * 60 * 60 * 24, // 24 hours
+        httpOnly: true 
+    }
+}));
+
+app.use(flash());
+
+// Pass flash messages to all EJS views via res.locals
+app.use((req, res, next) => {
+    res.locals.NODE_ENV = NODE_ENV;
+    res.locals.success_msg = req.flash('success');
+    res.locals.error_msg = req.flash('error');
+    next();
+});
+
+// In src/controllers/categories.js: Flashing a message before redirecting
+await updateCategory(categoryId, { name: trimmedName, description: trimmedDescription });
+req.flash('success', 'Category updated successfully!');
+res.redirect(`/category/${categoryId}`);
+
+How it works:
+- HTTP is stateless, meaning each request has no memory of past requests. Sessions solve this by storing data on the server linked to a session cookie in the user's browser.
+- connect-flash uses the session to store one-time feedback messages across redirects.
+- In server.js, we place flash messages into res.locals.success_msg so header.ejs can render the alert box.
+- Once rendered, connect-flash automatically removes the message from the session so it doesn't appear again on refresh.
+
+----------------------------------------------------------------------
+[COACH]:
+Very well explained! Flash messages bridging the gap across a redirect is one of the classic use cases for server-side sessions.
+
+Finally, let's examine Topic 4: Server-Side Validation. Even if you have client-side validation, why is server-side validation mandatory, what is your approach, and could you provide a relevant code snippet from your project?
+
+----------------------------------------------------------------------
+[STUDENT]:
+Here is our express-validator setup and error handling from src/controllers/projects.js:
+
+// Validation rules definition
+const projectValidation = [
+    body('title')
+        .trim()
+        .notEmpty().withMessage('Title is required')
+        .isLength({ min: 3, max: 200 }).withMessage('Title must be between 3 and 200 characters'),
+    body('description')
+        .trim()
+        .notEmpty().withMessage('Description is required')
+        .isLength({ max: 1000 }).withMessage('Description must be less than 1000 characters'),
+    body('location')
+        .trim()
+        .notEmpty().withMessage('Location is required')
+        .isLength({ max: 200 }).withMessage('Location must be less than 200 characters'),
+    body('date')
+        .notEmpty().withMessage('Date is required')
+        .isISO8601().withMessage('Date must be a valid date format'),
+    body('organizationId')
+        .notEmpty().withMessage('Organization is required')
+        .isInt().withMessage('Organization must be a valid integer')
+];
+
+// Checking validation results in processNewProjectForm controller
+const errors = validationResult(req);
+if (!errors.isEmpty()) {
+    errors.array().forEach((error) => {
+        req.flash('error', error.msg);
+    });
+    return res.redirect('/new-project');
+}
+
+Why it's necessary and how it works:
+- Client-side validation improves user experience, but it can be easily bypassed by disabling JavaScript or using tools like Postman or curl.
+- Server-side validation is our true security boundary.
+- We sanitize inputs using trim() and enforce data integrity with notEmpty(), min/max length checks, date format checks (isISO8601), and integer checks (isInt).
+- If validation fails, we capture all error messages with validationResult(req), pass them into flash messages, and redirect back to the form so the user sees clear feedback.
+
+----------------------------------------------------------------------
+[COACH]:
+Outstanding answer, Inefable! You clearly articulated the security necessity of server-side validation and demonstrated the sticky-form pattern to preserve user input on failure.
+
+We have thoroughly covered all four topics: handling form submissions, update forms in EJS, sessions and flash messages, and server-side validation. Great work today!
+======================================================================

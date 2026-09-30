@@ -3,9 +3,13 @@ import {
     getAllCategories, 
     getCategoryDetails, 
     getProjectsByCategoryId,
+    getCategoriesByProjectId,
+    getCategoriesByServiceProjectId,
     createCategory,
-    updateCategory
+    updateCategory,
+    updateCategoryAssignments
 } from '../models/categories.js';
+import { getProjectDetails } from '../models/projects.js';
 
 // Define any controller functions
 const showCategoriesPage = async (req, res) => {
@@ -72,6 +76,7 @@ const processNewCategoryForm = async (req, res, next) => {
         }
 
         await createCategory({ name: trimmedName, description: trimmedDescription });
+        req.flash('success', 'Category created successfully!');
         res.redirect('/categories');
     } catch (error) {
         next(error);
@@ -138,10 +143,38 @@ const processEditCategoryForm = async (req, res, next) => {
         }
 
         await updateCategory(categoryId, { name: trimmedName, description: trimmedDescription });
+        req.flash('success', 'Category updated successfully!');
         res.redirect(`/category/${categoryId}`);
     } catch (error) {
         next(error);
     }
+};
+
+const showAssignCategoriesForm = async (req, res) => {
+    const projectId = req.params.projectId || req.params.id;
+    const projectDetails = await getProjectDetails(projectId);
+    const categories = await getAllCategories();
+    const assignedCategories = await getCategoriesByProjectId(projectId);
+    const title = 'Assign Categories to Project';
+
+    res.render('assign-categories', {
+        title,
+        projectId,
+        projectDetails,
+        categories,
+        assignedCategories
+    });
+};
+
+const processAssignCategoriesForm = async (req, res) => {
+    const projectId = req.params.projectId || req.params.id;
+    const selectedCategoryIds = req.body.categoryIds || [];
+    // Ensure selectedCategoryIds is an array
+    const categoryIdsArray = Array.isArray(selectedCategoryIds) ? selectedCategoryIds : [selectedCategoryIds];
+
+    await updateCategoryAssignments(projectId, categoryIdsArray);
+    req.flash('success', 'Categories updated successfully.');
+    res.redirect(`/project/${projectId}`);
 };
 
 // Export any controller functions
@@ -151,6 +184,9 @@ export {
     showNewCategoryForm,
     processNewCategoryForm,
     showEditCategoryForm,
-    processEditCategoryForm
+    processEditCategoryForm,
+    showAssignCategoriesForm,
+    processAssignCategoriesForm
 };
+
 

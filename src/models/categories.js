@@ -55,14 +55,16 @@ export async function getCategoryDetails(id) {
 export async function getCategoriesByProjectId(projectId) {
   try {
     const queryText = `
-      SELECT 
+      SELECT DISTINCT
         c.category_id,
         c.name,
         c.description,
         c.icon
       FROM categories c
-      JOIN service_projects p ON c.category_id = p.category_id
-      WHERE p.project_id = $1;
+      LEFT JOIN project_category pc ON c.category_id = pc.category_id AND pc.project_id = $1
+      LEFT JOIN service_projects p ON c.category_id = p.category_id AND p.project_id = $1
+      WHERE pc.project_id IS NOT NULL OR p.project_id IS NOT NULL
+      ORDER BY c.name ASC;
     `;
     const result = await db.query(queryText, [projectId]);
     return result.rows;
@@ -71,6 +73,9 @@ export async function getCategoriesByProjectId(projectId) {
     throw error;
   }
 }
+
+// Alias for getCategoriesByProjectId if called as getCategoriesByServiceProjectId
+export const getCategoriesByServiceProjectId = getCategoriesByProjectId;
 
 /**
  * Retrieve all service projects for a given category
@@ -147,13 +152,45 @@ export async function updateCategory(id, categoryData) {
   }
 }
 
+/**
+ * Assign a category to a project in the many-to-many relationship table
+ */
+const assignCategoryToProject = async (categoryId, projectId) => {
+  const query = `
+    INSERT INTO project_category (category_id, project_id)
+    VALUES ($1, $2);
+  `;
+  await db.query(query, [categoryId, projectId]);
+};
+
+/**
+ * Updates the categories assigned to a project.
+ */
+export const updateCategoryAssignments = async (projectId, categoryIds) => {
+  // First, remove existing category assignments for the project
+  const deleteQuery = `
+    DELETE FROM project_category
+    WHERE project_id = $1;
+  `;
+  await db.query(deleteQuery, [projectId]);
+
+  // Next, add the new category assignments
+  for (const categoryId of categoryIds) {
+    if (categoryId) {
+      await assignCategoryToProject(categoryId, projectId);
+    }
+  }
+};
+
 export default {
   getAllCategories,
   getCategoryById,
   getCategoryDetails,
   getCategoriesByProjectId,
+  getCategoriesByServiceProjectId,
   getProjectsByCategoryId,
   createCategory,
   updateCategory,
+  updateCategoryAssignments,
 };
 

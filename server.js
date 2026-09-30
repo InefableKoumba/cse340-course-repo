@@ -2,6 +2,8 @@ import express from "express";
 import { fileURLToPath } from "url";
 import path from "path";
 import dotenv from "dotenv";
+import session from "express-session";
+import flash from "connect-flash";
 
 dotenv.config();
 
@@ -26,11 +28,26 @@ app.set("view engine", "ejs");
  * Configure Express middleware
  */
 
+// Allow Express to receive and process common POST data
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 // Serve static files from the public directory
 app.use(express.static(path.join(__dirname, "public")));
 
-// Parse URL-encoded bodies (as sent by HTML forms)
-app.use(express.urlencoded({ extended: true }));
+// Session configuration
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'cse340-secret-key-session',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { 
+        maxAge: 1000 * 60 * 60 * 24, // 24 hours
+        httpOnly: true 
+    }
+}));
+
+// Flash message middleware
+app.use(flash());
 
 // Tell Express where to find your templates
 app.set("views", path.join(__dirname, "src/views"));
@@ -43,9 +60,11 @@ app.use((req, res, next) => {
     next(); // Pass control to the next middleware or route
 });
 
-// Middleware to make NODE_ENV available to all templates
+// Middleware to make NODE_ENV and flash messages available to all templates
 app.use((req, res, next) => {
     res.locals.NODE_ENV = NODE_ENV;
+    res.locals.success_msg = req.flash('success');
+    res.locals.error_msg = req.flash('error');
     next();
 });
 

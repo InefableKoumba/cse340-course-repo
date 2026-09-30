@@ -14,6 +14,9 @@
                         <a href="mailto:<%= organizationDetails.contact_email %>" class="contact-link"><%= organizationDetails.contact_email %></a>
                     </div>
                 <% } %>
+                <div class="card-action" style="margin-top: 1rem;">
+                    <a href="/edit-organization/<%= organizationDetails.organization_id %>" class="btn btn-primary btn-sm">Edit Organization</a>
+                </div>
             </div>
         </article>
 

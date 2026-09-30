@@ -1,0 +1,78 @@
+<%- include('partials/header') %>
+<main class="page-main new-project-page">
+    <div class="page-header">
+        <h1 class="page-title"><%= title %></h1>
+    </div>
+
+    <div class="form-container">
+        <form action="/new-project" method="POST" class="project-form">
+            <div class="form-group">
+                <label for="title" class="form-label">Project Title</label>
+                <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    class="form-control"
+                    maxlength="150"
+                    required
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="description" class="form-label">Description</label>
+                <textarea
+                    id="description"
+                    name="description"
+                    class="form-control"
+                    rows="4"
+                    maxlength="500"
+                    required
+                ></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="location" class="form-label">Location</label>
+                <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    class="form-control"
+                    maxlength="255"
+                    required
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="date" class="form-label">Date</label>
+                <input
+                    type="date"
+                    id="date"
+                    name="date"
+                    class="form-control"
+                    required
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="organizationId" class="form-label">Organization</label>
+                <select
+                    id="organizationId"
+                    name="organizationId"
+                    class="form-control"
+                    required
+                >
+                    <option value="">Select an organization</option>
+                    <% organizations.forEach(org => { %>
+                        <option value="<%= org.organization_id %>"><%= org.name %></option>
+                    <% }); %>
+                </select>
+            </div>
+
+            <div class="form-actions">
+                <a href="/projects" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Create Project</button>
+            </div>
+        </form>
+    </div>
+</main>
+<%- include('partials/footer') %>

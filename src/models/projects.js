@@ -134,14 +134,16 @@ const getProjectDetails = async (id) => {
  */
 const getCategoriesByProjectId = async (projectId) => {
   const query = `
-    SELECT 
+    SELECT DISTINCT
       c.category_id,
       c.name,
       c.description,
       c.icon
     FROM categories c
-    JOIN service_projects p ON c.category_id = p.category_id
-    WHERE p.project_id = $1;
+    LEFT JOIN project_category pc ON c.category_id = pc.category_id AND pc.project_id = $1
+    LEFT JOIN service_projects p ON c.category_id = p.category_id AND p.project_id = $1
+    WHERE pc.project_id IS NOT NULL OR p.project_id IS NOT NULL
+    ORDER BY c.name ASC;
   `;
   const result = await db.query(query, [projectId]);
   return result.rows;
@@ -198,6 +200,30 @@ const updateProject = async (id, projectData) => {
   return result.rows[0];
 };
 
+/**
+ * Creates a new service project in the database.
+ */
+const createProject = async (title, description, location, date, organizationId) => {
+    const query = `
+      INSERT INTO service_projects (title, description, location, date, organization_id)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING project_id;
+    `;
+
+    const queryParams = [title, description, location, date, organizationId];
+    const result = await db.query(query, queryParams);
+
+    if (result.rows.length === 0) {
+        throw new Error('Failed to create project');
+    }
+
+    if (process.env.ENABLE_SQL_LOGGING === 'true') {
+        console.log('Created new project with ID:', result.rows[0].project_id);
+    }
+
+    return result.rows[0].project_id;
+};
+
 export { 
   getAllProjects, 
   getProjectsByOrganizationId, 
@@ -206,7 +232,8 @@ export {
   getProjectById,
   getCategoriesByProjectId,
   getProjectsByCategoryId,
-  updateProject
+  updateProject,
+  createProject
 };
 
 export default {
@@ -218,7 +245,9 @@ export default {
   getCategoriesByProjectId,
   getProjectsByCategoryId,
   updateProject,
+  createProject,
 };
+
 
 
 

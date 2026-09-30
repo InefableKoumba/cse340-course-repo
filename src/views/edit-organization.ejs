@@ -1,0 +1,67 @@
+<%- include('partials/header') %>
+<main class="page-main edit-organization-page">
+    <div class="page-header">
+        <h1 class="page-title"><%= title %></h1>
+    </div>
+
+    <div class="form-container">
+        <form action="/edit-organization/<%= organizationDetails.organization_id %>" method="POST" class="project-form">
+            <div class="form-group">
+                <label for="name" class="form-label">Organization Name</label>
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    value="<%= organizationDetails.name %>"
+                    class="form-control"
+                    maxlength="150"
+                    required
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="description" class="form-label">Description</label>
+                <textarea
+                    id="description"
+                    name="description"
+                    class="form-control"
+                    rows="4"
+                    maxlength="500"
+                    required
+                ><%= organizationDetails.description %></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="contactEmail" class="form-label">Contact Email</label>
+                <input
+                    type="email"
+                    id="contactEmail"
+                    name="contactEmail"
+                    value="<%= organizationDetails.contact_email %>"
+                    class="form-control"
+                    maxlength="255"
+                    required
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="logoFilename" class="form-label">Logo Filename</label>
+                <input
+                    type="text"
+                    id="logoFilename"
+                    name="logoFilename"
+                    value="<%= organizationDetails.logo_filename %>"
+                    class="form-control"
+                    maxlength="255"
+                    required
+                />
+            </div>
+
+            <div class="form-actions">
+                <a href="/organization/<%= organizationDetails.organization_id %>" class="btn btn-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Update Organization</button>
+            </div>
+        </form>
+    </div>
+</main>
+<%- include('partials/footer') %>
